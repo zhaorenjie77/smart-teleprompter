@@ -1,0 +1,6 @@
+# 环境变量配置模板
+# 请复制此文件为 .env 并填入您的 API Key
+
+# Google Gemini API Key（用于 PPT 多模态分析和 Q&A 问答）
+GOOGLE_API_KEY=your_google_api_key_here
+

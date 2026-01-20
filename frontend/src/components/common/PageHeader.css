@@ -1,0 +1,75 @@
+.page-header-bar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+  /* 安全区域适配 */
+  padding-top: env(safe-area-inset-top);
+}
+
+.header-left,
+.header-right {
+  flex: 0 0 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+}
+
+.header-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: var(--transition);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.back-btn:active {
+  background: var(--bg-hover);
+  transform: scale(0.95);
+}
+
+@media (hover: hover) {
+  .back-btn:hover {
+    background: var(--bg-hover);
+  }
+}
+
+/* 确保页面内容在header下方 */
+.page-with-header {
+  padding-top: 56px;
+}
+

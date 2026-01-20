@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+sentence-transformers
+numpy
+python-dotenv
+pydantic
+python-multipart
+google-generativeai
+pdf2image
+Pillow
+faster-whisper
+

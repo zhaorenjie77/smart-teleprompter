@@ -1,0 +1,362 @@
+.settings-page {
+  min-height: 100vh;
+  padding-bottom: 88px;
+  background: var(--bg-secondary);
+}
+
+.settings-content {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* 设置区块 */
+.settings-section {
+  background: var(--bg-primary);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+/* 设置项 */
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.backend-url-setting {
+  border-bottom: none;
+  padding-bottom: 8px;
+}
+
+.backend-url-input {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.url-input {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: monospace;
+}
+
+.url-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background: white;
+}
+
+.save-url-btn {
+  padding: 10px 20px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.save-url-btn:active {
+  transform: scale(0.95);
+}
+
+.backend-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  padding: 8px 0;
+  word-break: break-all;
+}
+
+.setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-info {
+  flex: 1;
+  padding-right: 16px;
+}
+
+.setting-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.setting-info p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* 选择器 */
+.setting-select {
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.setting-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* 滑块控制 */
+.sensitivity-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 200px;
+}
+
+.setting-slider {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  outline: none;
+}
+
+.setting-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+.setting-slider::-webkit-slider-thumb:active {
+  transform: scale(1.2);
+}
+
+.sensitivity-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-color);
+  min-width: 40px;
+  text-align: right;
+}
+
+.sensitivity-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-disabled);
+  margin-top: 4px;
+}
+
+/* 字体大小选项 */
+.font-size-options {
+  display: flex;
+  gap: 8px;
+}
+
+.font-btn {
+  padding: 8px 16px;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.font-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.font-btn:active {
+  transform: scale(0.95);
+}
+
+/* 开关切换 */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--bg-hover);
+  transition: var(--transition);
+  border-radius: 28px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: var(--transition);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--primary-color);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+}
+
+/* 关于卡片 */
+.about-card {
+  text-align: center;
+  padding: 32px 20px;
+}
+
+.app-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.about-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.version {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.about-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.about-link {
+  color: var(--primary-color);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.about-link:active {
+  opacity: 0.7;
+}
+
+.link-divider {
+  color: var(--text-disabled);
+}
+
+/* 危险按钮 */
+.danger-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.danger-btn:active {
+  transform: scale(0.98);
+  background: #FFF2F0;
+  border-color: var(--error-color);
+  color: var(--error-color);
+}
+
+/* 技术信息 */
+.tech-info {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--text-disabled);
+  font-size: 13px;
+}
+
+.tech-info p {
+  margin: 8px 0;
+}
+
+@media (min-width: 768px) {
+  .settings-page {
+    padding-bottom: 0;
+  }
+  
+  .setting-item {
+    flex-direction: row;
+  }
+  
+  .sensitivity-control {
+    min-width: 250px;
+  }
+}
+
