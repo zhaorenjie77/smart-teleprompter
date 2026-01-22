@@ -11,7 +11,7 @@ cmds = ["pip install -r requirements.txt"]
 cmds = ["echo 'Build complete'"]
 
 [start]
-cmd = "uvicorn main:app --host 0.0.0.0 --port $PORT"
+cmd = "uvicorn main_lite:app --host 0.0.0.0 --port $PORT"
 
 
 

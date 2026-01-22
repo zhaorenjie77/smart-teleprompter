@@ -10,8 +10,12 @@ sys.path.insert(0, str(backend_dir))
 from fastapi import FastAPI, UploadFile, File, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from processor import ScriptProcessor
-from tracker import Tracker
+# 轻量级部署：使用简化版processor
+try:
+    from processor_lite import ScriptProcessor, calculate_similarity
+except ImportError:
+    from processor import ScriptProcessor, calculate_similarity
+
 from models import SegmentStatus, ScriptSegment
 import google.generativeai as genai
 from dotenv import load_dotenv
