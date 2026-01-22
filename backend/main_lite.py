@@ -59,21 +59,34 @@ async def health_check():
 
 @app.post("/upload_script")
 async def upload_script(file: UploadFile = File(...)):
-    """上传演讲稿"""
+    """上传演讲稿（支持 .txt, .doc, .docx 格式）"""
     try:
         raw_content = await file.read()
+        filename = file.filename.lower()
         
-        # 智能编码检测：尝试多种编码
-        content = None
-        for encoding in ['utf-8', 'gbk', 'gb2312', 'gb18030', 'utf-16', 'latin-1']:
+        # 处理 .docx 文件
+        if filename.endswith('.docx'):
             try:
-                content = raw_content.decode(encoding)
-                break
-            except (UnicodeDecodeError, AttributeError):
-                continue
+                from docx import Document
+                import io
+                doc = Document(io.BytesIO(raw_content))
+                content = '\n'.join([paragraph.text for paragraph in doc.paragraphs])
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Word 文档解析失败: {str(e)}")
         
-        if content is None:
-            raise HTTPException(status_code=400, detail="无法识别文件编码，请使用 UTF-8 编码")
+        # 处理纯文本文件
+        else:
+            # 智能编码检测：尝试多种编码
+            content = None
+            for encoding in ['utf-8', 'gbk', 'gb2312', 'gb18030', 'utf-16', 'latin-1']:
+                try:
+                    content = raw_content.decode(encoding)
+                    break
+                except (UnicodeDecodeError, AttributeError):
+                    continue
+            
+            if content is None:
+                raise HTTPException(status_code=400, detail="无法识别文件编码，请使用 UTF-8 编码或 .docx 格式")
         
         presentation_data["script_content"] = content
         

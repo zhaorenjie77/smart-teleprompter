@@ -9,6 +9,7 @@ python-multipart==0.0.17
 # Google AI（核心功能）
 google-generativeai==0.8.3
 
-# PDF 处理（轻量版）
+# 文档处理
 PyMuPDF==1.24.14
 Pillow==11.0.0
+python-docx==1.1.2
