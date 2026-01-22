@@ -227,20 +227,53 @@ async def websocket_speech(websocket: WebSocket):
             if not speech_text:
                 continue
             
-            # 轻量级匹配逻辑：查找包含关系
+            # 轻量级匹配逻辑：改进的相似度计算
             matched_idx = -1
-            max_overlap = 0
+            max_similarity = 0
+            
+            # 预处理语音文本：去除标点和空格
+            import re
+            speech_clean = re.sub(r'[，。！？；：、\s,\.!?;:\s]+', '', speech_text.lower())
+            
+            # 设置匹配阈值（可调节）
+            MATCH_THRESHOLD = 0.5  # 50% 相似度即可匹配
+            MIN_MATCH_LENGTH = 3   # 至少匹配 3 个字符
             
             for idx, segment in enumerate(segments):
                 text = segment["text"]
+                text_clean = re.sub(r'[，。！？；：、\s,\.!?;:\s]+', '', text.lower())
                 
-                # 检查包含关系（双向）
-                if speech_text in text or text in speech_text:
-                    # 计算重叠长度
-                    overlap = min(len(speech_text), len(text))
-                    if overlap > max_overlap:
-                        max_overlap = overlap
-                        matched_idx = idx
+                # 计算相似度
+                similarity = 0
+                
+                # 方法1: 简单包含关系
+                if speech_clean in text_clean or text_clean in speech_clean:
+                    similarity = 1.0
+                
+                # 方法2: 字符重叠比例
+                else:
+                    common_chars = set(speech_clean) & set(text_clean)
+                    if len(common_chars) > 0:
+                        # 计算重叠比例
+                        overlap_ratio = len(common_chars) / max(len(set(speech_clean)), len(set(text_clean)))
+                        
+                        # 检查连续子串
+                        max_substr = 0
+                        for i in range(len(speech_clean)):
+                            for j in range(i + MIN_MATCH_LENGTH, len(speech_clean) + 1):
+                                substr = speech_clean[i:j]
+                                if substr in text_clean:
+                                    max_substr = max(max_substr, len(substr))
+                        
+                        # 综合评分
+                        if max_substr >= MIN_MATCH_LENGTH:
+                            substr_ratio = max_substr / len(text_clean)
+                            similarity = (overlap_ratio * 0.3 + substr_ratio * 0.7)
+                
+                # 更新最佳匹配
+                if similarity > max_similarity and similarity >= MATCH_THRESHOLD:
+                    max_similarity = similarity
+                    matched_idx = idx
             
             # 更新状态
             if matched_idx != -1:
