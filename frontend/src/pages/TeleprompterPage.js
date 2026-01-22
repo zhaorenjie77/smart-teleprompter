@@ -20,9 +20,9 @@ const getWebSocketUrl = () => {
     return 'ws://localhost:8000';
   }
   
-  // 默认返回错误提示
-  console.error('未配置后端 URL！请在设置中配置或设置环境变量 REACT_APP_BACKEND_URL');
-  return null;
+  // 硬编码后端地址（临时方案）
+  console.log('使用硬编码的后端地址');
+  return 'wss://smart-teleprompter-production.up.railway.app';
 };
 
 const TeleprompterPage = ({ segments: initialSegments }) => {
