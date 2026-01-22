@@ -3,6 +3,7 @@ fastapi==0.115.0
 uvicorn[standard]==0.32.0
 
 # 基础依赖
+setuptools==69.0.0
 python-dotenv==1.0.1
 python-multipart==0.0.17
 
