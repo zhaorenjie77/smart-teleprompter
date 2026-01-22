@@ -1,22 +1,4 @@
-# 核心 Web 框架（快速部署版本）
+# 最小依赖 - 用于快速部署测试
 fastapi==0.115.0
-uvicorn[standard]==0.32.0
-
-# 基础依赖
-python-dotenv==1.0.1
+uvicorn==0.32.0
 python-multipart==0.0.17
-
-# Google AI（核心功能）
-google-generativeai==0.8.3
-
-# PDF 处理
-PyMuPDF==1.24.14
-Pillow==11.0.0
-
-# 注意：以下依赖包太大，已暂时移除以加快部署
-# 语音识别：前端使用 Web Speech API
-# 文本向量化：暂时使用简单的文本匹配
-# sentence-transformers
-# faster-whisper
-# numpy
-
