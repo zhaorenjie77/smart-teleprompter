@@ -10,12 +10,8 @@ sys.path.insert(0, str(backend_dir))
 from fastapi import FastAPI, UploadFile, File, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-# 轻量级部署：使用简化版processor
-try:
-    from processor_lite import ScriptProcessor, calculate_similarity
-except ImportError:
-    from processor import ScriptProcessor, calculate_similarity
-
+from processor import ScriptProcessor, calculate_similarity
+from tracker import Tracker
 from models import SegmentStatus, ScriptSegment
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -45,11 +41,36 @@ presentation_data = {
 @app.post("/upload_script")
 async def upload_script(file: UploadFile = File(...)):
     """
-    上传演讲稿并预处理
+    上传演讲稿并预处理（支持 .txt, .docx 格式，多种编码）
     用户体验优化：返回详细进度信息
     """
     try:
-        content = (await file.read()).decode("utf-8")
+        raw_content = await file.read()
+        filename = file.filename.lower()
+        
+        # 处理 .docx 文件
+        if filename.endswith('.docx'):
+            try:
+                from docx import Document
+                import io
+                doc = Document(io.BytesIO(raw_content))
+                content = '\n'.join([paragraph.text for paragraph in doc.paragraphs])
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=f"Word 文档解析失败: {str(e)}")
+        
+        # 处理纯文本文件（智能编码检测）
+        else:
+            content = None
+            for encoding in ['utf-8', 'gbk', 'gb2312', 'gb18030', 'utf-16', 'latin-1']:
+                try:
+                    content = raw_content.decode(encoding)
+                    break
+                except (UnicodeDecodeError, AttributeError):
+                    continue
+            
+            if content is None:
+                raise HTTPException(status_code=400, detail="无法识别文件编码，请使用 UTF-8 编码或 .docx 格式")
+        
         presentation_data["script_content"] = content
         
         processor = presentation_data["processor"]
