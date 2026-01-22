@@ -1,11 +1,9 @@
 # Nixpacks configuration for Railway
 # Railway 部署配置
+# 使用 Python 3.11 以避免 distutils 问题
 
 [phases.setup]
 nixPkgs = ["python311"]
-
-[phases.install]
-cmds = ["pip install --upgrade pip setuptools wheel", "pip install -r requirements.txt"]
 
 [start]
 cmd = "uvicorn main:app --host 0.0.0.0 --port $PORT"
