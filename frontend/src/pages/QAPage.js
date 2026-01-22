@@ -3,9 +3,16 @@ import PageHeader from '../components/common/PageHeader';
 import './QAPage.css';
 
 const getBackendUrl = () => {
-  const hostname = window.location.hostname;
-  const backendHost = hostname === 'localhost' ? 'localhost' : hostname;
-  return `http://${backendHost}:8000`;
+  // 优先使用环境变量
+  if (process.env.REACT_APP_BACKEND_URL) {
+    return process.env.REACT_APP_BACKEND_URL;
+  }
+  // 本地开发
+  if (window.location.hostname === 'localhost') {
+    return 'http://localhost:8000';
+  }
+  // 生产环境默认值
+  return 'https://smart-teleprompter-production.up.railway.app';
 };
 
 const QAPage = () => {
