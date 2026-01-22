@@ -3,10 +3,26 @@ import { useNavigate } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
 import './TeleprompterPage.css';
 
+// 获取后端 WebSocket URL
 const getWebSocketUrl = () => {
-  const hostname = window.location.hostname;
-  const backendHost = hostname === 'localhost' ? 'localhost' : hostname;
-  return `ws://${backendHost}:8000`;
+  // 优先使用环境变量
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+  
+  if (backendUrl) {
+    // 将 HTTP URL 转换为 WebSocket URL
+    return backendUrl
+      .replace('https://', 'wss://')
+      .replace('http://', 'ws://');
+  }
+  
+  // 本地开发环境
+  if (window.location.hostname === 'localhost') {
+    return 'ws://localhost:8000';
+  }
+  
+  // 默认返回错误提示
+  console.error('未配置后端 URL！请在设置中配置或设置环境变量 REACT_APP_BACKEND_URL');
+  return null;
 };
 
 const TeleprompterPage = ({ segments: initialSegments }) => {
@@ -23,18 +39,44 @@ const TeleprompterPage = ({ segments: initialSegments }) => {
   // WebSocket连接
   useEffect(() => {
     if (segments.length > 0) {
-      ws.current = new WebSocket(`${getWebSocketUrl()}/ws/speech`);
+      const wsUrl = getWebSocketUrl();
       
-      ws.current.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (!data.error) {
-          setSegments(data.segments);
-          setCurrentIdx(data.current_idx);
-          setIsFreeStyle(data.is_free_style);
-        }
-      };
+      if (!wsUrl) {
+        console.error('WebSocket URL 未配置');
+        return;
+      }
       
-      return () => ws.current?.close();
+      console.log('连接 WebSocket:', `${wsUrl}/ws/speech`);
+      
+      try {
+        ws.current = new WebSocket(`${wsUrl}/ws/speech`);
+        
+        ws.current.onopen = () => {
+          console.log('✅ WebSocket 已连接');
+        };
+        
+        ws.current.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          console.log('收到消息:', data);
+          if (!data.error) {
+            setSegments(data.segments);
+            setCurrentIdx(data.current_idx);
+            setIsFreeStyle(data.is_free_style);
+          }
+        };
+        
+        ws.current.onerror = (error) => {
+          console.error('❌ WebSocket 错误:', error);
+        };
+        
+        ws.current.onclose = () => {
+          console.log('WebSocket 已关闭');
+        };
+        
+        return () => ws.current?.close();
+      } catch (error) {
+        console.error('❌ WebSocket 连接失败:', error);
+      }
     }
   }, [segments.length]);
 
@@ -69,8 +111,13 @@ const TeleprompterPage = ({ segments: initialSegments }) => {
         const last = event.results.length - 1;
         const text = event.results[last][0].transcript;
         
+        console.log('🎤 识别到:', text);
+        
         if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+          console.log('📤 发送到后端:', text);
           ws.current.send(JSON.stringify({ text }));
+        } else {
+          console.error('❌ WebSocket 未连接，无法发送');
         }
       };
 
@@ -91,11 +138,18 @@ const TeleprompterPage = ({ segments: initialSegments }) => {
     }
 
     if (isListening) {
+      console.log('⏹️ 停止监听');
       recognition.current.stop();
       setIsListening(false);
     } else {
-      recognition.current.start();
-      setIsListening(true);
+      console.log('🎤 开始监听');
+      try {
+        recognition.current.start();
+        setIsListening(true);
+      } catch (error) {
+        console.error('❌ 启动语音识别失败:', error);
+        alert('启动语音识别失败，请检查麦克风权限');
+      }
     }
   };
 
