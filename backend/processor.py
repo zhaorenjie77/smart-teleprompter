@@ -13,7 +13,8 @@ class ScriptProcessor:
     def __init__(self, model_name='paraphrase-multilingual-MiniLM-L12-v2'):
         # 使用多语言模型以支持中英文混合场景
         self.model = SentenceTransformer(model_name)
-        self.gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+        # 使用最新的 Gemini 2.5 Flash 模型（2026年1月）
+        self.gemini_model = genai.GenerativeModel('gemini-2.5-flash')
         
     def split_text(self, text: str) -> List[str]:
         """

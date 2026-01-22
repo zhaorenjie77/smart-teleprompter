@@ -90,3 +90,6 @@ trap "echo ''; echo '🛑 正在停止服务...'; kill $BACKEND_PID $FRONTEND_PI
 # 保持运行
 wait
 
+
+
+

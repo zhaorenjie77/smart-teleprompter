@@ -87,3 +87,6 @@ echo "   - 添加环境变量: REACT_APP_BACKEND_URL=[Railway给的后端地址]
 echo ""
 echo "================================"
 
+
+
+

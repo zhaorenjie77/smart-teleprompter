@@ -173,8 +173,8 @@ Role: 演讲辅助专家 - 你正在帮助一位大学生回答教授在 present
 """
 
     try:
-        # 使用 Gemini 生成回答
-        gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+        # 使用最新的 Gemini 2.5 Flash 模型生成回答
+        gemini_model = genai.GenerativeModel('gemini-2.5-flash')
         response = gemini_model.generate_content(prompt)
         
         answer = response.text
