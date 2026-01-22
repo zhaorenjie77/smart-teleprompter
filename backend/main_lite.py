@@ -61,7 +61,20 @@ async def health_check():
 async def upload_script(file: UploadFile = File(...)):
     """上传演讲稿"""
     try:
-        content = (await file.read()).decode("utf-8")
+        raw_content = await file.read()
+        
+        # 智能编码检测：尝试多种编码
+        content = None
+        for encoding in ['utf-8', 'gbk', 'gb2312', 'gb18030', 'utf-16', 'latin-1']:
+            try:
+                content = raw_content.decode(encoding)
+                break
+            except (UnicodeDecodeError, AttributeError):
+                continue
+        
+        if content is None:
+            raise HTTPException(status_code=400, detail="无法识别文件编码，请使用 UTF-8 编码")
+        
         presentation_data["script_content"] = content
         
         # 简单分句
