@@ -1,14 +1,5 @@
-# Nixpacks configuration for Smart Teleprompter Backend
-# 智能提词器后端 Nixpacks 配置
-
-[phases.setup]
-nixPkgs = ["python39"]
-
-[phases.install]
-cmds = ["pip install -r requirements.txt"]
-
-[phases.build]
-cmds = ["echo 'Build complete'"]
+# Nixpacks configuration for Railway
+# Railway 部署配置
 
 [start]
 cmd = "uvicorn main_lite:app --host 0.0.0.0 --port $PORT"

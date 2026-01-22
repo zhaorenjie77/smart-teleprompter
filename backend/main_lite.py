@@ -13,7 +13,11 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 
 load_dotenv()
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+
+# 安全配置 API Key
+API_KEY = os.getenv("GOOGLE_API_KEY")
+if API_KEY:
+    genai.configure(api_key=API_KEY)
 
 app = FastAPI(title="Smart Teleprompter API - Lite")
 
@@ -44,10 +48,13 @@ async def root():
 @app.get("/health")
 async def health_check():
     """健康检查"""
+    api_key = os.getenv("GOOGLE_API_KEY")
     return {
         "status": "ok",
-        "service": "Smart Teleprompter",
-        "api_key_configured": bool(os.getenv("GOOGLE_API_KEY"))
+        "service": "Smart Teleprompter Lite",
+        "version": "1.0",
+        "api_key_configured": bool(api_key),
+        "api_key_preview": f"{api_key[:10]}..." if api_key else "not set"
     }
 
 @app.post("/upload_script")
