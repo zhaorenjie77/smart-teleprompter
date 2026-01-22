@@ -6,7 +6,7 @@ Smart Teleprompter - Lightweight Deployment Version
 """
 
 import os
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
@@ -33,7 +33,9 @@ app.add_middleware(
 presentation_data = {
     "script_content": "",
     "segments": [],
-    "ppt_analysis": {}
+    "ppt_analysis": {},
+    "current_idx": -1,
+    "is_free_style": False
 }
 
 @app.get("/")
@@ -166,6 +168,11 @@ async def ask_qa(question: str):
     try:
         script = presentation_data.get("script_content", "")
         ppt_summary = presentation_data.get("ppt_analysis", {}).get("summary", "")
+        segments = presentation_data.get("segments", [])
+        
+        # 检查是否有跳过的段落
+        skipped = [s for s in segments if s.get("status") == "skipped"]
+        has_skipped = len(skipped) > 0
         
         prompt = f"""
         你是一位演讲辅助专家。
@@ -181,13 +188,93 @@ async def ask_qa(question: str):
         model = genai.GenerativeModel('gemini-2.5-flash')
         response = model.generate_content(prompt)
         
+        answer = response.text
+        if has_skipped:
+            answer = "⚠️ 提示：演讲中有部分内容被跳过，如果问题涉及这些内容，建议补充说明。\n\n" + answer
+        
         return {
             "success": True,
-            "answer": response.text
+            "answer": answer,
+            "has_skipped_content": has_skipped
         }
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"AI 回答失败: {str(e)}")
+
+@app.websocket("/ws/speech")
+async def websocket_speech(websocket: WebSocket):
+    """
+    实时语音追踪 WebSocket
+    轻量级版本：使用简单的文本匹配
+    """
+    await websocket.accept()
+    
+    segments = presentation_data.get("segments", [])
+    
+    if len(segments) == 0:
+        await websocket.send_json({
+            "error": "请先上传演讲稿"
+        })
+        await websocket.close()
+        return
+    
+    try:
+        while True:
+            # 接收前端发送的语音文字
+            data = await websocket.receive_json()
+            speech_text = data.get("text", "").strip()
+            
+            if not speech_text:
+                continue
+            
+            # 轻量级匹配逻辑：查找包含关系
+            matched_idx = -1
+            max_overlap = 0
+            
+            for idx, segment in enumerate(segments):
+                text = segment["text"]
+                
+                # 检查包含关系（双向）
+                if speech_text in text or text in speech_text:
+                    # 计算重叠长度
+                    overlap = min(len(speech_text), len(text))
+                    if overlap > max_overlap:
+                        max_overlap = overlap
+                        matched_idx = idx
+            
+            # 更新状态
+            if matched_idx != -1:
+                # 找到匹配
+                old_idx = presentation_data["current_idx"]
+                presentation_data["current_idx"] = matched_idx
+                presentation_data["is_free_style"] = False
+                
+                # 标记已讲
+                segments[matched_idx]["status"] = "covered"
+                
+                # 检测跳读
+                if old_idx != -1 and matched_idx > old_idx + 1:
+                    # 中间被跳过的段落标记为 skipped
+                    for i in range(old_idx + 1, matched_idx):
+                        if segments[i]["status"] == "pending":
+                            segments[i]["status"] = "skipped"
+                
+            else:
+                # 未找到匹配，可能是脱稿
+                presentation_data["is_free_style"] = True
+            
+            # 发送更新
+            await websocket.send_json({
+                "segments": segments,
+                "current_idx": presentation_data["current_idx"],
+                "is_free_style": presentation_data["is_free_style"],
+                "matched": matched_idx != -1
+            })
+    
+    except WebSocketDisconnect:
+        pass
+    except Exception as e:
+        await websocket.send_json({"error": str(e)})
 
 if __name__ == "__main__":
     import uvicorn
