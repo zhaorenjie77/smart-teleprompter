@@ -176,7 +176,7 @@ const TeleprompterPage = ({ segments: initialSegments }) => {
   );
 
   return (
-    <div className={`teleprompter-page ${isFreeStyle ? 'free-style-active' : ''}`}>
+    <div className={`teleprompter-page ${isFreeStyle ? 'free-style-active' : ''} ${isListening ? 'listening' : ''}`}>
       <PageHeader 
         title="提词器" 
         rightAction={headerRightAction}
