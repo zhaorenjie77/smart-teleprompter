@@ -1,4 +1,14 @@
-# 最小依赖 - 用于快速部署测试
+# 核心 Web 框架
 fastapi==0.115.0
 uvicorn==0.32.0
+
+# 基础依赖
+python-dotenv==1.0.1
 python-multipart==0.0.17
+
+# Google AI（核心功能）
+google-generativeai==0.8.3
+
+# PDF 处理（轻量版）
+PyMuPDF==1.24.14
+Pillow==11.0.0
