@@ -207,9 +207,13 @@ async def websocket_speech(websocket: WebSocket):
     实时语音追踪 WebSocket
     轻量级版本：使用简单的文本匹配
     """
-    await websocket.accept()
+    print("🔌 WebSocket 连接请求")
     
-    segments = presentation_data.get("segments", [])
+    try:
+        await websocket.accept()
+        print("✅ WebSocket 连接已接受")
+        
+        segments = presentation_data.get("segments", [])
     
     if len(segments) == 0:
         await websocket.send_json({
@@ -305,9 +309,13 @@ async def websocket_speech(websocket: WebSocket):
             })
     
     except WebSocketDisconnect:
-        pass
+        print("📴 WebSocket 客户端断开连接")
     except Exception as e:
-        await websocket.send_json({"error": str(e)})
+        print(f"❌ WebSocket 错误: {e}")
+        try:
+            await websocket.send_json({"error": str(e)})
+        except:
+            pass
 
 if __name__ == "__main__":
     import uvicorn

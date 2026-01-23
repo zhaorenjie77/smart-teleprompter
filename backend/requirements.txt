@@ -1,6 +1,7 @@
 # 核心 Web 框架（轻量级版本）
 fastapi==0.115.0
 uvicorn==0.32.0
+websockets==12.0
 
 # 基础依赖
 setuptools==69.0.0
