@@ -13,6 +13,17 @@
   <body>
     <noscript>您需要启用 JavaScript 才能运行此应用。</noscript>
     <div id="root"></div>
+    
+    <!-- 移动端调试工具（生产环境也可用，方便排查问题） -->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>
+      // 自动初始化 Eruda 调试工具
+      // 在手机上会显示一个悬浮按钮，点击后可以查看控制台
+      if (typeof eruda !== 'undefined') {
+        eruda.init();
+        console.log('📱 移动端调试工具已启动！点击右下角绿色按钮查看控制台');
+      }
+    </script>
   </body>
 </html>
 
