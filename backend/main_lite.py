@@ -209,11 +209,10 @@ async def websocket_speech(websocket: WebSocket):
     """
     print("🔌 WebSocket 连接请求")
     
-    try:
-        await websocket.accept()
-        print("✅ WebSocket 连接已接受")
-        
-        segments = presentation_data.get("segments", [])
+    await websocket.accept()
+    print("✅ WebSocket 连接已接受")
+    
+    segments = presentation_data.get("segments", [])
     
     if len(segments) == 0:
         await websocket.send_json({
