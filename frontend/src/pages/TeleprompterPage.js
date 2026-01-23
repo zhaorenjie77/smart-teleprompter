@@ -105,7 +105,11 @@ const TeleprompterPage = ({ segments: initialSegments }) => {
       recognition.current = new SpeechRecognition();
       recognition.current.continuous = true;
       recognition.current.interimResults = false;
-      recognition.current.lang = 'zh-CN';
+      
+      // 从设置中读取语言配置
+      const savedLang = localStorage.getItem('setting_speechLanguage') || 'zh-CN';
+      recognition.current.lang = savedLang;
+      console.log('🌍 语音识别语言:', savedLang);
 
       recognition.current.onresult = (event) => {
         const last = event.results.length - 1;

@@ -3,14 +3,38 @@ import PageHeader from '../components/common/PageHeader';
 import './SettingsPage.css';
 
 const SettingsPage = () => {
-  const [settings, setSettings] = useState({
-    speechLanguage: 'zh-CN',
-    sensitivity: 0.75,
-    autoScroll: true,
-    showProgress: true,
-    fontSize: 'medium',
-    theme: 'light'
-  });
+  // 从 localStorage 加载保存的设置
+  const loadSettings = () => {
+    const defaultSettings = {
+      speechLanguage: 'zh-CN',
+      sensitivity: 0.5,  // 默认 50%（中等）
+      autoScroll: true,
+      showProgress: true,
+      fontSize: 'medium',
+      theme: 'light'
+    };
+    
+    const savedSettings = {};
+    Object.keys(defaultSettings).forEach(key => {
+      const saved = localStorage.getItem(`setting_${key}`);
+      if (saved !== null) {
+        // 处理不同类型的值
+        if (key === 'sensitivity') {
+          savedSettings[key] = parseFloat(saved);
+        } else if (key === 'autoScroll' || key === 'showProgress') {
+          savedSettings[key] = saved === 'true';
+        } else {
+          savedSettings[key] = saved;
+        }
+      } else {
+        savedSettings[key] = defaultSettings[key];
+      }
+    });
+    
+    return savedSettings;
+  };
+  
+  const [settings, setSettings] = useState(loadSettings());
 
   const [backendUrl, setBackendUrl] = useState(
     localStorage.getItem('backend_url') || ''
@@ -37,7 +61,7 @@ const SettingsPage = () => {
     if (window.confirm('确定要恢复默认设置吗？')) {
       const defaultSettings = {
         speechLanguage: 'zh-CN',
-        sensitivity: 0.75,
+        sensitivity: 0.5,  // 默认 50%
         autoScroll: true,
         showProgress: true,
         fontSize: 'medium',
@@ -47,6 +71,7 @@ const SettingsPage = () => {
       Object.keys(defaultSettings).forEach(key => {
         localStorage.removeItem(`setting_${key}`);
       });
+      alert('已恢复默认设置！');
     }
   };
 
@@ -79,7 +104,10 @@ const SettingsPage = () => {
             </button>
           </div>
           <p className="backend-hint">
-            当前: {localStorage.getItem('backend_url') || '使用默认地址'}
+            💡 提示：如果已在 Vercel 配置环境变量，无需手动输入
+          </p>
+          <p className="backend-hint">
+            当前地址: {localStorage.getItem('backend_url') || process.env.REACT_APP_BACKEND_URL || '使用默认'}
           </p>
         </section>
 
